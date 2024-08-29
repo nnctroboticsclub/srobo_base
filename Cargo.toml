@@ -1,0 +1,14 @@
+[package]
+name = "srobo-base"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+stm32f4xx-hal = { version = "0.17.1", features = ["stm32f446"], optional = true }
+
+[features]
+default = ["std"]
+
+alloc = []
+std = ["alloc"]
+stm32_f446 = ["dep:stm32f4xx-hal"]
