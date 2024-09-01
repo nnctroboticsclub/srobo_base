@@ -5,10 +5,11 @@ edition = "2021"
 
 [dependencies]
 stm32f4xx-hal = { version = "0.17.1", features = ["stm32f446"], optional = true }
+serialport = {version = "4.5.0", optional = true}
 
 [features]
-default = ["std"]
+default = []
 
 alloc = []
-std = ["alloc"]
+std = ["alloc", "dep:serialport"]
 stm32_f446 = ["dep:stm32f4xx-hal"]
