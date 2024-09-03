@@ -37,6 +37,28 @@ impl<T> Deref for SwmrReader<T> {
     }
 }
 
+impl<T> SwmrReader<T> {
+    pub fn wait_for(
+        &self,
+        checker: fn(&T) -> bool,
+        timeout: Duration,
+        time: &impl TimeImpl,
+    ) -> bool {
+        let start = time.now();
+        loop {
+            if checker(self) {
+                return true;
+            }
+
+            if time.now() - start > timeout {
+                return false;
+            }
+
+            time.sleep(Duration::from_millis(10));
+        }
+    }
+}
+
 impl<T> SwmrReader<Option<T>> {
     pub fn wait_available(&self, timeout: Duration, time: &impl TimeImpl) -> bool {
         let start = time.now();

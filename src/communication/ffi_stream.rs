@@ -33,14 +33,30 @@ pub extern "C" fn __ffi_cstream_feed_rx(instance: *mut CStreamRx, data: *const u
     (instance.on_data)(data);
 }
 
+#[no_mangle]
+pub extern "C" fn __ffi_cstream_new_rx() -> *mut CStreamRx {
+    Box::into_raw(Box::new(CStreamRx::new()))
+}
+
 #[repr(C)]
 pub struct CStreamTx {
-    write: Option<extern "C" fn(instance: *const c_void, data: *const u8, len: usize) -> ()>,
+    write: Option<
+        extern "C" fn(
+            instance: *const c_void,
+            context: *const c_void,
+            data: *const u8,
+            len: usize,
+        ) -> (),
+    >,
+    context: *const c_void,
 }
 
 impl CStreamTx {
     pub fn new() -> Self {
-        CStreamTx { write: None }
+        CStreamTx {
+            write: None,
+            context: core::ptr::null(),
+        }
     }
 }
 
@@ -51,6 +67,7 @@ impl WritableStream for CStreamTx {
         if let Some(write) = self.write {
             (write)(
                 self as *const Self as *const c_void,
+                self.context,
                 data.as_ptr(),
                 data.len(),
             );
@@ -62,8 +79,15 @@ impl WritableStream for CStreamTx {
 #[no_mangle]
 pub extern "C" fn __ffi_cstream_associate_tx(
     instance: *mut CStreamTx,
-    write: extern "C" fn(instance: *const c_void, data: *const u8, len: usize) -> (),
+    context: *const c_void,
+    write: extern "C" fn(
+        instance: *const c_void,
+        context: *const c_void,
+        data: *const u8,
+        len: usize,
+    ) -> (),
 ) {
     let instance = unsafe { &mut *instance };
     instance.write = Some(write);
+    instance.context = context;
 }

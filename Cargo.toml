@@ -3,6 +3,9 @@ name = "srobo_base"
 version = "0.1.0"
 edition = "2021"
 
+[build-dependencies]
+cbindgen = "0.27.0"
+
 [dependencies]
 stm32f4xx-hal = { version = "0.17.1", features = ["stm32f446"], optional = true }
 serialport = {version = "4.5.0", optional = true}

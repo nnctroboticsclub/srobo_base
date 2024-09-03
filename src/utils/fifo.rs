@@ -1,3 +1,6 @@
+#[cfg(test)]
+extern crate alloc;
+
 use alloc::boxed::Box;
 use core::mem::MaybeUninit;
 use core::time::Duration;
@@ -142,5 +145,11 @@ impl<T, const N: usize> SpscRx<T, N> {
 
             time.sleep(Duration::from_millis(10));
         }
+    }
+}
+
+impl<T: Copy, const N: usize> SpscRx<T, N> {
+    pub fn touch(&self) -> Option<T> {
+        self.dequeue().copied()
     }
 }
