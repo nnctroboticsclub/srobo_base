@@ -24,6 +24,10 @@ impl<T> SwmrWriter<T> {
             (*self.0).0 = data;
         }
     }
+
+    pub fn as_mut(&self) -> &mut T {
+        unsafe { &mut (*self.0).0 }
+    }
 }
 
 #[derive(Clone, Copy)]
