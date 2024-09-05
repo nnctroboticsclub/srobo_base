@@ -61,15 +61,19 @@ pub fn u8(input: &[u8]) -> Result<(&[u8], u8), ParseError> {
     Ok((rest, value))
 }
 
-pub fn comma_separated_u8(input: &[u8], terminator: u8) -> Result<(&[u8], Vec<u8>), ParseError> {
+pub fn comma_separated_u8<'a>(
+    input: &'a [u8],
+    terminator: u8,
+    dest: &mut [u8; 128],
+) -> Result<(&'a [u8], usize), ParseError> {
     let mut rest = input;
-    let mut values = vec![];
+    let mut i = 0;
 
     loop {
         let (new_rest, value) = u8(rest)?;
         rest = new_rest;
 
-        values.push(value);
+        dest[i] = value;
 
         if rest.len() == 0 {
             break;
@@ -82,7 +86,8 @@ pub fn comma_separated_u8(input: &[u8], terminator: u8) -> Result<(&[u8], Vec<u8
         }
 
         rest = &rest[1..];
+        i += 1;
     }
 
-    Ok((rest, values))
+    Ok((rest, 1 + i))
 }
