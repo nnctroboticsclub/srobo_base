@@ -9,7 +9,7 @@ use super::string_queue::StringQueueRx;
 use super::string_queue::StringQueueTx;
 
 pub struct Lined {
-    buf: [u8; 32],
+    buf: [u8; 64],
     len: usize,
 
     queue_tx: StringQueueTx<512, 4>,
@@ -20,7 +20,7 @@ impl Lined {
     pub fn new() -> Lined {
         let (queue_tx, queue_rx) = StringQueue::new();
         Lined {
-            buf: [0; 32],
+            buf: [0; 64],
             len: 0,
             queue_tx,
             queue_rx,
