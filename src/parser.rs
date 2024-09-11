@@ -61,6 +61,30 @@ pub fn u8(input: &[u8]) -> Result<(&[u8], u8), ParseError> {
     Ok((rest, value))
 }
 
+pub fn u32(input: &[u8]) -> Result<(&[u8], u32), ParseError> {
+    if input.len() < 8 {
+        return Err(ParseError::IncompleteData);
+    }
+
+    let (num, rest) = input.split_at(8);
+
+    let mut value = 0;
+    for ch in num {
+        if !ch.is_ascii_hexdigit() {
+            return Err(ParseError::InvalidData);
+        }
+
+        let digit = if ch.is_ascii_digit() {
+            ch - b'0'
+        } else {
+            ch.to_ascii_lowercase() - b'a' + 10
+        };
+        value = (value << 4) | digit as u32;
+    }
+
+    Ok((rest, value))
+}
+
 pub fn comma_separated_u8<'a>(
     input: &'a [u8],
     terminator: u8,
