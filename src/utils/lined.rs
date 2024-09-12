@@ -12,8 +12,8 @@ pub struct Lined {
     buf: [u8; 64],
     len: usize,
 
-    queue_tx: StringQueueTx<512, 4>,
-    queue_rx: StringQueueRx<512, 4>,
+    queue_tx: StringQueueTx<256, 4>,
+    queue_rx: StringQueueRx<256, 4>,
 }
 
 impl Lined {
