@@ -2,8 +2,6 @@ use core::result::Result;
 use core::result::Result::{Err, Ok};
 
 extern crate alloc;
-use alloc::vec;
-use alloc::vec::Vec;
 
 #[derive(Debug)]
 pub enum ParseError {

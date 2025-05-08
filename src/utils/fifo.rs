@@ -65,6 +65,11 @@ impl<T, const N: usize> Spsc<T, N> {
         (SpscTx::new(fifo), SpscRx::new(fifo))
     }
 
+    pub fn reset(&mut self) {
+        self.head = 0;
+        self.tail = 0;
+    }
+
     pub fn len(&self) -> usize {
         (N + self.head - self.tail) % N
     }
@@ -111,6 +116,12 @@ impl<T, const N: usize> SpscTx<T, N> {
 
     pub fn enqueue(&self, data: T) -> Result<(), Error> {
         unsafe { (*self.fifo).enqueue(data) }
+    }
+
+    pub fn reset(&self) {
+        unsafe {
+            (*self.fifo).reset();
+        }
     }
 }
 

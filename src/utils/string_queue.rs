@@ -38,6 +38,11 @@ impl<const N: usize, const L: usize> StringQueueTx<N, L> {
         }
         Ok(())
     }
+
+    pub fn reset(&self) {
+        self.ch.reset();
+        self.len.reset();
+    }
 }
 
 pub struct StringQueueRx<const N: usize, const L: usize> {

@@ -27,9 +27,17 @@ impl Lined {
         }
     }
 
+    // Reset the buffer and the queue
+    pub fn reset(&mut self) {
+        self.len = 0;
+    }
+
     pub fn feed(&mut self, data: &[u8]) -> Result<(), fifo::Error> {
         let length = self.len;
 
+        if length + data.len() > self.buf.len() {
+            return Err(fifo::Error::Full);
+        }
         self.buf[length..length + data.len()].copy_from_slice(data);
         self.len += data.len();
 

@@ -15,6 +15,3 @@ mod ffi_stream;
 
 #[cfg(feature = "alloc")]
 pub use ffi_stream::*;
-
-#[cfg(feature = "alloc")]
-pub mod ssp;
