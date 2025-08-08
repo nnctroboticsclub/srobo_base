@@ -3,11 +3,7 @@ use core::result::Result;
 
 use alloc::boxed::Box;
 
-pub trait WritableStream {
-    type Error: Debug;
-
-    fn write(&mut self, data: &[u8]) -> Result<(), Self::Error>;
-}
+use crate::communication::WritableStream;
 
 pub trait AsyncReadableStream {
     type Error: Debug;
