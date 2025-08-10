@@ -80,7 +80,6 @@ fn serial_device_thread(port: String, baud_rate: u32, req_rx: Receiver<SerialDev
             Err(e) => match e.kind() {
                 std::io::ErrorKind::TimedOut => continue,
                 _ => {
-                    println!("Error reading from serial port: {}", e);
                     break;
                 }
             },
