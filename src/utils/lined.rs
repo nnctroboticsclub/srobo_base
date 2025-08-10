@@ -28,8 +28,14 @@ impl Lined {
     }
 
     // Reset the buffer and the queue
-    pub fn reset(&mut self) {
-        self.len = 0;
+    pub fn reset_queue(&mut self) -> Vec<u8> {
+        let mut data = Vec::new();
+        if self.len > 0 {
+            data.extend_from_slice(&self.buf[..self.len]);
+        }
+        self.queue_tx.reset();
+        self.buf = [0; 64];
+        data
     }
 
     pub fn feed(&mut self, data: &[u8]) -> Result<(), fifo::Error> {
