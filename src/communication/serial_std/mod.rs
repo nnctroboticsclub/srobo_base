@@ -15,6 +15,7 @@ use crate::communication::AsyncSerial;
 pub(super) enum SerialDeviceRequest {
     Tx(Vec<u8>),
     OnRx(Box<dyn Fn(&[u8]) + Send>),
+    OnClose(Box<dyn Fn() + Send>),
     Close(),
 }
 
@@ -37,8 +38,10 @@ impl SerialDevice {
     }
 }
 
+// TODO(syoch): Call OnClose() immediately when any errors happend
 fn serial_device_thread(port: String, baud_rate: u32, req_rx: Receiver<SerialDeviceRequest>) -> () {
-    let mut callbacks = Vec::new();
+    let mut rx_callbacks = Vec::new();
+    let mut close_callbacks = Vec::new();
 
     let mut serial = serialport::new(&port, baud_rate)
         .baud_rate(baud_rate)
@@ -54,10 +57,12 @@ fn serial_device_thread(port: String, baud_rate: u32, req_rx: Receiver<SerialDev
                 serial.flush().unwrap();
             }
             Ok(SerialDeviceRequest::OnRx(cb)) => {
-                callbacks.push(cb);
+                rx_callbacks.push(cb);
+            }
+            Ok(SerialDeviceRequest::OnClose(cb)) => {
+                close_callbacks.push(cb);
             }
             Ok(SerialDeviceRequest::Close()) => {
-                println!("Closing serial device");
                 break;
             }
             Err(_) => (),
@@ -67,13 +72,23 @@ fn serial_device_thread(port: String, baud_rate: u32, req_rx: Receiver<SerialDev
             Ok(n) => {
                 if n > 0 {
                     let data = &buf[..n];
-                    for cb in callbacks.iter_mut() {
+                    for cb in rx_callbacks.iter_mut() {
                         cb(data);
                     }
                 }
             }
-            _ => (),
+            Err(e) => match e.kind() {
+                std::io::ErrorKind::TimedOut => continue,
+                _ => {
+                    println!("Error reading from serial port: {}", e);
+                    break;
+                }
+            },
         }
+    }
+
+    for cb in close_callbacks {
+        cb();
     }
 }
 

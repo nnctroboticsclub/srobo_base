@@ -31,3 +31,17 @@ impl<E: Debug + Default> AsyncReadableStream for SDevReadableStream<E> {
         Ok(())
     }
 }
+
+impl<E: Default> SDevReadableStream<E> {
+    pub fn on_closed(&mut self, cb: Box<dyn Fn()>) -> Result<(), E> {
+        let converted_cb = unsafe { core::mem::transmute(cb) };
+
+        self.serial
+            .lock()
+            .map_err(|_| E::default())?
+            .req_tx
+            .send(SerialDeviceRequest::OnClose(converted_cb))
+            .unwrap();
+        Ok(())
+    }
+}
