@@ -8,19 +8,19 @@ use super::string_queue::StringQueue;
 use super::string_queue::StringQueueRx;
 use super::string_queue::StringQueueTx;
 
-pub struct Lined {
-    buf: [u8; 64],
+pub struct Lined<const N: usize> {
+    buf: [u8; N],
     len: usize,
 
     queue_tx: StringQueueTx<256, 4>,
     queue_rx: StringQueueRx<256, 4>,
 }
 
-impl Lined {
-    pub fn new() -> Lined {
+impl<const N: usize> Lined<N> {
+    pub fn new() -> Lined<N> {
         let (queue_tx, queue_rx) = StringQueue::new();
         Lined {
-            buf: [0; 64],
+            buf: [0; N],
             len: 0,
             queue_tx,
             queue_rx,
@@ -34,7 +34,7 @@ impl Lined {
             data.extend_from_slice(&self.buf[..self.len]);
         }
         self.queue_tx.reset();
-        self.buf = [0; 64];
+        self.buf = [0; N];
         data
     }
 
