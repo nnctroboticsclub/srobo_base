@@ -114,6 +114,14 @@ impl<T, const N: usize> SpscTx<T, N> {
         SpscTx { fifo }
     }
 
+    /// Enqueue an item into the FIFO
+    /// # Examples
+    /// ```
+    /// use srobo_base::utils::fifo::Spsc;
+    /// let (tx, rx) = Spsc::<u8, 4>::new();
+    /// tx.enqueue(1);
+    /// assert_eq!(rx.dequeue(), Some(&1));
+    /// ```
     pub fn enqueue(&self, data: T) -> Result<(), Error> {
         unsafe { (*self.fifo).enqueue(data) }
     }
@@ -134,10 +142,40 @@ impl<T, const N: usize> SpscRx<T, N> {
         SpscRx { fifo }
     }
 
+    /// Dequeue an item from the FIFO
+    /// Returns None if the FIFO is empty
+    /// # Examples
+    /// ```
+    /// use srobo_base::utils::fifo::Spsc;
+    /// let (tx, rx) = Spsc::<u8, 4>::new();
+    /// assert_eq!(rx.dequeue(), None);
+    /// ```
+    ///
+    /// ```
+    /// use srobo_base::utils::fifo::Spsc;
+    /// let (tx, rx) = Spsc::<u8, 4>::new();
+    /// tx.enqueue(1);
+    /// assert_eq!(rx.dequeue(), Some(&1));
+    /// ```
     pub fn dequeue(&self) -> Option<&T> {
         return unsafe { (*self.fifo).dequeue() };
     }
 
+    /// Dequeue an item from the FIFO
+    /// Returns None if the FIFO is empty
+    /// # Examples
+    /// ```
+    /// use srobo_base::utils::fifo::Spsc;
+    /// let (tx, rx) = Spsc::<u8, 4>::new();
+    /// assert_eq!(rx.len(), 0);
+    /// ```
+    ///
+    /// ```
+    /// use srobo_base::utils::fifo::Spsc;
+    /// let (tx, rx) = Spsc::<u8, 4>::new();
+    /// tx.enqueue(1);
+    /// assert_eq!(rx.len(), 1);
+    /// ```
     pub fn len(&self) -> usize {
         unsafe { (*self.fifo).len() }
     }

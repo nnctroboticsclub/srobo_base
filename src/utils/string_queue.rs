@@ -94,10 +94,10 @@ mod tests {
 
         tx.enqueue("hello".as_bytes()).unwrap();
         tx.enqueue("world".as_bytes()).unwrap();
-        tx.enqueue("aiueo".as_bytes()).unwrap();
+        tx.enqueue("abcde".as_bytes()).unwrap();
         assert_eq!(rx.dequeue(), Some("hello".as_bytes()));
         assert_eq!(rx.dequeue(), Some("world".as_bytes()));
-        assert_eq!(rx.dequeue(), Some("aiueo".as_bytes()));
+        assert_eq!(rx.dequeue(), Some("abcde".as_bytes()));
         assert_eq!(rx.dequeue(), None);
     }
 }

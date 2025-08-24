@@ -2,11 +2,11 @@ use core::option::Option;
 use core::option::Option::None;
 
 extern crate alloc;
-
 use super::fifo;
 use super::string_queue::StringQueue;
 use super::string_queue::StringQueueRx;
 use super::string_queue::StringQueueTx;
+use alloc::vec::Vec;
 
 pub struct Lined<const N: usize> {
     buf: [u8; N],
@@ -27,7 +27,15 @@ impl<const N: usize> Lined<N> {
         }
     }
 
-    // Reset the buffer and the queue
+    /// Reset the buffer and the queue
+    /// # Example
+    /// ```
+    /// use srobo_base::utils::lined::Lined;
+    /// let mut lined = Lined::<16>::new();
+    /// lined.feed(b"TheString");
+    /// let data = lined.reset_queue();
+    /// assert_eq!(data, b"TheString");
+    /// ```
     pub fn reset_queue(&mut self) -> Vec<u8> {
         let mut data = Vec::new();
         if self.len > 0 {
@@ -38,6 +46,7 @@ impl<const N: usize> Lined<N> {
         data
     }
 
+    /// Feed data into the buffer
     pub fn feed(&mut self, data: &[u8]) -> Result<(), fifo::Error> {
         let length = self.len;
 
@@ -72,6 +81,16 @@ impl<const N: usize> Lined<N> {
         Ok(true)
     }
 
+    /// Find a line in the buffer
+    /// # Example
+    /// ```
+    /// use srobo_base::utils::lined::Lined;
+    /// let mut lined = Lined::<16>::new();
+    /// lined.feed(b"Hello\nWorld\n");
+    /// assert_eq!(lined.get_line().unwrap(), b"Hello\n");
+    /// assert_eq!(lined.get_line().unwrap(), b"World\n");
+    /// assert_eq!(lined.get_line(), None);
+    /// ```
     pub fn get_line(&mut self) -> Option<&[u8]> {
         self.queue_rx.dequeue()
     }

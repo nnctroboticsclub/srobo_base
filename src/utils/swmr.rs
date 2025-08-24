@@ -6,6 +6,15 @@ use core::option::Option;
 use core::time::Duration;
 
 use crate::time::TimeImpl;
+
+/// Single Writer, Multiple Reader
+/// # Example
+/// ```
+/// use srobo_base::utils::swmr::Swmr;
+/// let (writer, reader) = Swmr::new(0);
+/// writer.write(42);
+/// assert_eq!(*reader, 42);
+/// ```
 pub struct Swmr<T>(T);
 
 impl<T> Swmr<T> {
