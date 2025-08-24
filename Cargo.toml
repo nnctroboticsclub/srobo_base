@@ -1,5 +1,8 @@
 [package]
 name = "srobo_base"
+license = "MIT"
+authors = ["syoch <syoch64@gmail.com>"]
+description = "syoch-robotics rust implementation"
 version = "0.1.0"
 edition = "2021"
 
