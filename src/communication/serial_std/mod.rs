@@ -8,6 +8,7 @@ use std::sync::{
 };
 
 use read_stream::SDevReadableStream;
+use serialport::{DataBits, FlowControl, Parity, StopBits};
 use write_stream::SDevWritableStream;
 
 use crate::communication::AsyncSerial;
@@ -45,6 +46,10 @@ fn serial_device_thread(port: String, baud_rate: u32, req_rx: Receiver<SerialDev
 
     let mut serial = serialport::new(&port, baud_rate)
         .baud_rate(baud_rate)
+        .data_bits(DataBits::Eight)
+        .flow_control(FlowControl::None)
+        .parity(Parity::None)
+        .stop_bits(StopBits::One)
         .timeout(Duration::from_millis(10))
         .open()
         .expect("Failed to open serial port");
