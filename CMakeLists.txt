@@ -1,6 +1,6 @@
 add_custom_command(
   OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/inc/srobo2/ffi/base.hpp"
-  COMMAND /home/vscode/.cargo/bin/cbindgen --lang c++ --output inc/srobo2/ffi/base.hpp
+  COMMAND cbindgen --lang c++ --output inc/srobo2/ffi/base.hpp
   WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
 )
 
