@@ -1,5 +1,7 @@
 #pragma once
 
+#include <chrono>
+
 #include <mbed.h>
 #include <srobo2/ffi/base.hpp>
 
@@ -9,18 +11,22 @@ class MBedTimer {
   srobo2::ffi::CTime ctime;
 
   static float now(const void* timer) {
-    auto t = static_cast<const mbed::Timer*>(timer);
+    const auto t = static_cast<const mbed::Timer*>(timer);
+    const auto elapsed = t->elapsed_time();
 
-    return t->read_us() / 1.0E6;
+    return elapsed.count() * 1e-6f;
   }
 
   static void sleep(const void* timer, float duration) {
+    using namespace std::chrono_literals;
+
     auto t = static_cast<const mbed::Timer*>(timer);
 
-    auto start = t->read_us();
-    auto end = start + duration * 1.0E6;
+    auto start = t->elapsed_time();
+    auto end = start + duration * 1s;
 
-    while (t->read_us() < end);
+    while (t->elapsed_time() < end)
+      ;
   }
 
  public:
