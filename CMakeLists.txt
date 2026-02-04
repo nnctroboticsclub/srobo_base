@@ -10,7 +10,7 @@ add_custom_target(srobo_base_hxx_target DEPENDS "${SROBO_BASE_FFIInclude}/srobo2
 
 add_library(srobo_base_hxx INTERFACE)
 add_dependencies(srobo_base_hxx srobo_base_hxx_target)
-target_include_directories(srobo_base_hxx INTERFACE ./inc)
+target_include_directories(srobo_base_hxx INTERFACE ./inc ${SROBO_BASE_FFIInclude})
 
 if (DEFINED MBED_TARGET)
   find_package(StaticMbedOS REQUIRED)
